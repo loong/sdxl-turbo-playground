@@ -2,6 +2,12 @@ from diffusers import AutoPipelineForImage2Image
 from diffusers.utils import load_image
 import torch
 from tqdm import tqdm
+import argparse
+
+# Parse command-line arguments
+parser = argparse.ArgumentParser(description="Image-to-Image generation with SDXL-Turbo.")
+parser.add_argument("--prompt", type=str, default="needle", help="Prompt for image generation.")
+args = parser.parse_args()
 
 # Load the SDXL-Turbo model for image-to-image generation
 pipeline = AutoPipelineForImage2Image.from_pretrained(
@@ -23,8 +29,8 @@ for i in tqdm(range(10)):
     seed = 1234 + i
     generator = torch.manual_seed(seed)
 
-    # Define the prompt and generate a transformed image
-    prompt = "ted talk presentation"
+    # Use the prompt from the command-line argument
+    prompt = args.prompt
     image = pipeline(
         prompt=prompt, 
         image=init_image, 
@@ -39,4 +45,3 @@ for i in tqdm(range(10)):
 
 for i, img in enumerate(images):
     img.save(f"{prompt.split(' ')[0]}_{i}.png")
-
